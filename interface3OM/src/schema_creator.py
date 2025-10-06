@@ -1,7 +1,4 @@
-import os
-import pandas as pd
 import pyodbc
-
 import db_config
 
 
@@ -33,7 +30,6 @@ def create_reactor_data_table(cursor):
         print("Table 'reactor_data' created successfully.")
     except Exception as e:
         print(f"Error creating table: {e}")
-
 
 
 

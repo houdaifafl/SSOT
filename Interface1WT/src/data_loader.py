@@ -185,7 +185,7 @@ def extract_bdgt_fcst_df(file_path, years_to_load, is_budget):
     Returns:
         pd.DataFrame: Filtered DataFrame with renamed date columns and version.
     """
-    # Select the version sheet name baed on is_budget
+    # Select the version sheet name based on is_budget
     version_sheet = "Cons_Forecast"
 
     # Extract version name from the version sheet

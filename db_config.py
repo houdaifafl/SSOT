@@ -1,20 +1,28 @@
 import pyodbc
 
 def get_db_connection():
-    # Define the connection string using Windows Authentication
     connection = pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=localhost,1433;'
+        #'SERVER=10.2.144.12,1433;'
+        'SERVER=STLDB02.saturnus.ads,1433;'
         'DATABASE=master;'  # Replace with your database name
-        'Trusted_Connection=yes;'  # Use Windows credentials
+        'UID=FHaachenP;'
+        'PWD=HEjMxRdctaAo1!!;'
+        #'Trusted_Connection=no;'  # Use Windows credentials
+     	'Trusted_Connection=yes;'
+ 	    'Encrypt=yes;'
+        'TrustServerCertificate=yes;'  # Use Windows credentials
     )
     return connection
 
-# Example usage of the connection
+conn = None
 try:
     conn = get_db_connection()
     print("Connection to forecast and budget DB successful!")
+except pyodbc.OperationalError as e:
+    print("Database connection failed:", e)
     # Do database operations here
 finally:
-    conn.close()
-    print("Connection closed.")
+    if conn:
+        conn.close()
+        print("Connection closed.")

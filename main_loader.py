@@ -3,6 +3,7 @@ from interface2_IST.src.data_loader import load_tables as load_tables_ist
 from interface3OM.src.data_loader import load_tables as load_tables_3om
 
 
+
 def main():
     print("Starting data loading for all interfaces...\n")
 

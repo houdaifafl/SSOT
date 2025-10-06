@@ -1,19 +1,12 @@
 from datetime import datetime
-
 import pandas as pd
-
 from Interface1WT.src.calculations import get_dates_and_version_from_excel
 from db_config import get_db_connection
 from file_paths import path_variables
 
-
-#from file_paths import path_variables2
-
-
 def total_menge_for_interval(conn, start_date, end_date):
     """
-    Function to calculate the total used raw materials (ROH) for each day in a given date interval,
-    and also calculate the monthly total at the end.
+    Function to calculate the total used raw materials (ROH) for each day in a given date interval.
 
     Args:
         conn: The database connection object.
@@ -21,8 +14,7 @@ def total_menge_for_interval(conn, start_date, end_date):
         end_date (str): The end date of the interval in 'DD.MM.YYYY' format.
 
     Returns:
-        List[Dict]: A list of dictionaries containing date and total values in tons,
-                    with a monthly total appended at the end.
+        List[Dict]: A list of dictionaries containing date and total values in tons.
     """
     try:
         # Create a cursor to execute queries
@@ -37,7 +29,7 @@ def total_menge_for_interval(conn, start_date, end_date):
         print(f"Processing interval from {start_date.date()} to {end_date.date()}...")
 
         daily_totals = []  # To store results for each day
-        monthly_totals = {}  # To store cumulative monthly totals
+
 
         current_date = start_date
         while current_date <= end_date:
@@ -91,11 +83,6 @@ def total_menge_for_interval(conn, start_date, end_date):
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
-
-
-# Remove the following incorrect call:
-# date = "2024-04-04"  # Replace with your desired date
-# total_menge(date)
 
 
 def grouped_summary(conn, date):
@@ -287,10 +274,6 @@ def grouped_summary_for_interval(conn, start_date, end_date):
         return {}
 
 
-
-
-
-
 def calculate_all_concs(conn, start_date, end_date):
     """
     Function to calculate daily and monthly values for all concentrates of type 'Concs'.
@@ -314,7 +297,7 @@ def calculate_category_n_concs(conn, start_date, end_date):
 
 def calculate_category_PK_concs(conn, start_date, end_date):
     """
-    Function to calculate daily and monthly values for concentrates of type 'Concs' with category 'N'.
+    Function to calculate daily and monthly values for concentrates of type 'Concs' with category 'PK'.
     """
     return _calculate_concentrates(conn, start_date, end_date, category="PK")
 
@@ -588,13 +571,13 @@ def _calculate_al_materials_and_name(conn, start_date, end_date, material_name=N
 
 def calculate_category_P_pastes(conn, start_date, end_date):
     """
-    Function to calculate daily and monthly values for concentrates of type 'Concs' with category 'N'.
+    Function to calculate daily and monthly values for materials of type 'Paste' with category 'P'.
     """
     return _calculate_pastes(conn, start_date, end_date, category="P")
 
 def _calculate_pastes(conn, start_date, end_date, category=None):
     """
-    Internal function to calculate daily and monthly values for concentrates and their percentages.
+    Internal function to calculate daily and monthly values for pastes and their percentages.
     """
     from datetime import datetime, timedelta
     from collections import defaultdict
@@ -731,7 +714,7 @@ def _calculate_pastes(conn, start_date, end_date, category=None):
 
 def _calculate_all_materials(conn, start_date, end_date, category=None):
     """
-    Internal function to calculate daily and monthly values for concentrates and their percentages.
+    Internal function to calculate daily and monthly values for all materials and their percentages.
     """
     from datetime import datetime, timedelta
     from collections import defaultdict
@@ -867,7 +850,7 @@ def _calculate_all_materials(conn, start_date, end_date, category=None):
 
 def _calculate_recirculate_concentrates(conn, start_date, end_date):
     """
-    Internal function to calculate daily and monthly values for concentrates.
+    Internal function to calculate daily and monthly values for recirculate materials.
     The material ID transformation is applied directly, and the percentage calculation is removed.
     """
     from datetime import datetime, timedelta
@@ -951,7 +934,7 @@ def _calculate_recirculate_concentrates(conn, start_date, end_date):
 
 def _calculate_fluxes_concentrates(conn, start_date, end_date):
     """
-    Internal function to calculate daily and monthly values for concentrates.
+    Internal function to calculate daily and monthly values for fluxes materials.
     The material ID transformation is applied directly, and the percentage calculation is removed.
     """
     from datetime import datetime, timedelta
@@ -1029,8 +1012,7 @@ def _calculate_fluxes_concentrates(conn, start_date, end_date):
         print(f"{'Daily Total:':<15}{data['daily_total']:<15.1f}")
 
     return {
-        "daily_values": daily_values_by_date,
-        #"monthly_totals": dict(monthly_totals),
+        "daily_values": daily_values_by_date
     }
 
 
@@ -1039,25 +1021,25 @@ def _calculate_fluxes_concentrates(conn, start_date, end_date):
 
 def calculate_category_all_others(conn, start_date, end_date):
     """
-    Function to calculate daily and monthly values for all concentrates of type 'Others'.
+    Function to calculate daily and monthly values for all materials of type 'Others'.
     """
     return _calculate_others(conn, start_date, end_date, categories=None)
 
 def calculate_category_RI_others(conn, start_date, end_date):
     """
-    Function to calculate daily and monthly values for concentrates of type 'Others' with category 'RI'.
+    Function to calculate daily and monthly values for materials of type 'Others' with category 'RI'.
     """
     return _calculate_others(conn, start_date, end_date, categories=["RI"])
 
 def calculate_category_RE_others(conn, start_date, end_date):
     """
-    Function to calculate daily and monthly values for concentrates of type 'Others' with category 'RE'.
+    Function to calculate daily and monthly values for materials of type 'Others' with category 'RE'.
     """
     return _calculate_others(conn, start_date, end_date, categories=["RE"])
 
 def calculate_category_OX_others_category(conn, start_date, end_date):
     """
-    Function to calculate daily and monthly values for concentrates of type 'Others' with category 'Ox'.
+    Function to calculate daily and monthly values for materials of type 'Others' with category 'Ox'.
     """
     return _calculate_others(conn, start_date, end_date, categories=["Ox"])
 
@@ -1202,7 +1184,7 @@ def calculate_category_OX_others(conn, start_date, end_date):
 
 def _calculate_others(conn, start_date, end_date, categories=None):
     """
-    Internal function to calculate daily and monthly values for concentrates,
+    Internal function to calculate daily and monthly values for materials von type "Others",
     including percentages
 
     Args:

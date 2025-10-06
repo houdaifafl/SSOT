@@ -121,7 +121,7 @@ def load_dim_lagerbewegung_incre():
 
 def load_Report_table(conn, start_date, end_date):
     """
-    Loads combined data into the Report table.
+    Loads IST data into the Report table.
 
     Args:
         conn: Database connection object.
@@ -237,7 +237,7 @@ def load_tables():
         # Format the dates to the desired format
         start_date_formatted = start_date.strftime("%d.%m.%Y")
         end_date_formatted = end_date.strftime("%d.%m.%Y")
-        load_Report_table(conn, start_date_formatted, end_date_formatted)
+        #load_Report_table(conn, start_date_formatted, end_date_formatted)
 
 
 

@@ -1,10 +1,6 @@
 from db_config import get_db_connection
 from file_paths import path_variables
 
-
-#from file_paths import path_variables
-
-
 def calculate_total_budget_and_forecast(conn, start_date, end_date, material_name=None, material_type=None, category=None, version_name=None):
     import pandas as pd
     from pandas.tseries.offsets import MonthEnd
@@ -478,19 +474,11 @@ def calculate():
 
         # Retrieve start and end dates from the Excel file
         start_date, end_date, version_name = get_dates_and_version_from_excel(variables_file_path)
-        # result = calculate_total_budget_and_forecast(conn, start_date, end_date, version_name)
-        # print("total:", result)
 
-        # result1 = get_shutdown_dates(conn, start_date, end_date, version_name="for_ver_2")
-        # print("total:", result1)
-
-        result2 = calculate_with_shutdown_from_db(None, start_date, end_date,material_name="MISSOURI DOE RUN", version_name=version_name)
+        result2 = calculate_with_shutdown_from_db(None, start_date, end_date, version_name=version_name)
         print("result2:", result2)
 
-        # values =retrieve_budget_and_forecast_by_material(conn)
-        # print(values)
-        # shutdown = get_shutdown_dates(conn)
-        # print('days: ', shutdown)
+
 
     except Exception as e:
         print(f"Error by the calculations: {e}")

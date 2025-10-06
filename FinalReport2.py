@@ -1,8 +1,8 @@
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
-import pyodbc
 import os
 from Interface1WT.src.calculations import calculate_with_shutdown_from_db
 from db_config import get_db_connection
@@ -23,7 +23,7 @@ from interface2_IST.src.CalculationIST import (
     calculate_category_P_pastes, _calculate_al_materials_and_name, calculate_category_OX_others_category,
 )
 
-def combined_export_to_excel(conn, connection_string, start_date, end_date, version_name):
+def combined_export_to_excel(conn, start_date, end_date, version_name):
     """
     Combines the outputs of both methods into a single table and exports to an Excel file.
     """
@@ -109,13 +109,12 @@ def combined_export_to_excel(conn, connection_string, start_date, end_date, vers
 
         # Query reactor data
         print("Fetching reactor data...")
-        connection = pyodbc.connect(connection_string)
         query = f"""
                     SELECT * 
                     FROM reactor_data
                     WHERE CONVERT(DATE, Zeitstempel) BETWEEN '{full_month_start_date}' AND '{(pd.to_datetime(full_month_end_date) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")}'
         """
-        df = pd.read_sql(query, connection)
+        df = pd.read_sql(query, conn)
 
         combined_data = []
 
@@ -504,10 +503,10 @@ def combined_report(start_date, end_date, version_name, output_file):
     Generates a single Excel file with multiple sheets: Combined Report, Summarized Report, and Material Report.
     """
     try:
-        connection_string = "Driver={ODBC Driver 17 for SQL Server};Server=localhost;Database=master;Trusted_Connection=yes;"
+        #connection_string = "Driver={ODBC Driver 17 for SQL Server};Server=10.2.144.12,1433;Database=master;UID=FHaachenP;PWD=HEjMxRdctaAo1!!;"
 
         # Sheet 1: Combined Export Report
-        combined_export_df = combined_export_to_excel(get_db_connection(), connection_string, start_date, end_date,
+        combined_export_df = combined_export_to_excel(get_db_connection(), start_date, end_date,
                                                       version_name)
 
         # Sheet 2: Summarized Report
@@ -561,58 +560,77 @@ def combined_report(start_date, end_date, version_name, output_file):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "list_versions":
-        # List available versions
+    import re
+
+    def validate_date_format(date_str):
+        # Match format DD.MM.YYYY
+        return re.match(r"\d{2}\.\d{2}\.\d{4}", date_str)
+
+    print("Willkommen zum Report-Generator\n")
+
+    try:
+        # Ask user for input
+        start_date_raw = input("Bitte Startdatum eingeben (Format: DD.MM.YYYY): ").strip()
+        end_date_raw = input("Bitte Enddatum eingeben (Format: DD.MM.YYYY): ").strip()
+
+        if not validate_date_format(start_date_raw):
+            raise ValueError("Ungültiges Startdatum-Format. Bitte DD.MM.YYYY verwenden.")
+        if not validate_date_format(end_date_raw):
+            raise ValueError("Ungültiges Enddatum-Format. Bitte DD.MM.YYYY verwenden.")
+
+        print("\nVerfügbare Versionen werden abgerufen...\n")
         versions = fetch_available_versions()
-        if versions:
-            print("Verfügbare Versionen:")
-            for version in versions:
-                print(f"- {version}")
-        else:
-            print("Keine verfügbaren Versionen gefunden.")
-    elif len(sys.argv) == 4:
-        # Eingabeparameter auslesen
-        start_date_raw = sys.argv[1].strip()
-        end_date_raw = sys.argv[2].strip()
-        version_name = sys.argv[3].strip()
+        if not versions:
+            raise ValueError("Keine Versionen gefunden.")
 
-        # Debugging der Eingabedaten
-        print(f"Debug: Rohdaten Startdatum: {start_date_raw}, Enddatum: {end_date_raw}")
+        print("Verfügbare Versionen:")
+        for i, version in enumerate(versions, 1):
+            print(f"{i}. {version}")
 
-        # Verarbeiten der Datumsangaben
-        try:
-            # Entferne Zeitangabe vor dem Parsing, falls vorhanden
-            start_date_only = start_date_raw.split(" ")[0]
-            end_date_only = end_date_raw.split(" ")[0]
+        version_name = input("\nBitte geben Sie den gewünschten Version-Namen ein: ").strip()
+        if version_name not in versions:
+            raise ValueError("Ungültige Version eingegeben. Bitte wählen Sie eine gültige Version aus der Liste.")
 
-            # Parsing der reinen Datumsangaben
-            start_date_parsed = pd.to_datetime(start_date_only, format="%d.%m.%Y", errors="coerce")
-            end_date_parsed = pd.to_datetime(end_date_only, format="%d.%m.%Y", errors="coerce")
+        # Convert date strings
+        start_date_parsed = pd.to_datetime(start_date_raw, format="%d.%m.%Y")
+        end_date_parsed = pd.to_datetime(end_date_raw, format="%d.%m.%Y")
 
-            # Überprüfen, ob die Konvertierung erfolgreich war
-            if pd.isna(start_date_parsed):
-                raise ValueError(f"Ungültiges Startdatum: {start_date_raw}. Bitte verwenden Sie das Format DD.MM.YYYY.")
-            if pd.isna(end_date_parsed):
-                raise ValueError(f"Ungültiges Enddatum: {end_date_raw}. Bitte verwenden Sie das Format DD.MM.YYYY.")
-        except Exception as e:
-            raise ValueError(
-                "Fehler beim Verarbeiten der Datumsangaben. Stellen Sie sicher, dass das Format DD.MM.YYYY korrekt ist.") from e
-
-        # Zeit hinzufügen
         start_date = start_date_parsed.strftime("%Y-%m-%d") + " 00:00"
         end_date = end_date_parsed.strftime("%Y-%m-%d") + " 23:59"
 
-        # Debugging der formatierten Daten
-        print(f"Debug: Formatiertes Startdatum: {start_date}, Enddatum: {end_date}")
-
-        # Define output file path
-
-        start_date_excelname = pd.to_datetime(start_date).strftime('%Y-%m-%d')
-        end_date_excelname = pd.to_datetime(end_date).strftime('%Y-%m-%d')
-        output_file = os.path.join(r"C:\Single Source of Truth - Fh Aachen\Report", f"Report_{start_date_excelname}_{end_date_excelname}.xlsx")
+        # Excel file name
+        start_excel = start_date_parsed.strftime("%Y-%m-%d")
+        end_excel = end_date_parsed.strftime("%Y-%m-%d")
 
 
-        # Execute the combined report generation
+        # --- Report directory setup ---
+
+        # Detect project root depending on execution context
+        def get_project_root():
+            if getattr(sys, 'frozen', False):
+                # Running as .exe → use folder where the exe is
+                return Path(sys.executable).parent
+            else:
+                # Running as script → use script’s folder
+                return Path(__file__).resolve().parent.parent
+
+
+        PROJECT_ROOT = get_project_root()
+
+        # Default: Report folder next to project root (works on server & laptop)
+        default_report_dir = PROJECT_ROOT / "Report"
+
+        # Allow override with environment variable REPORT_DIR
+        REPORT_DIR = Path(os.getenv("REPORT_DIR", default_report_dir))
+
+        # Ensure directory exists
+        REPORT_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Final output file
+        output_file = REPORT_DIR / f"Report_{start_excel}_{end_excel}.xlsx"
+
+        # Call report generation
         combined_report(start_date, end_date, version_name, output_file)
-    else:
-        print("Ungültige Argumente. Verwenden Sie 'list_versions' oder geben Sie Startdatum, Enddatum und Version an.")
+
+    except Exception as e:
+        print(f"Ein Fehler ist aufgetreten: {e}")

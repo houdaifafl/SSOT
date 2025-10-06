@@ -1,34 +1,44 @@
+from pathlib import Path
 import glob
 import os
+import sys
 
-
-# Helper function to get the latest excel file
 def get_latest_excel_file(directory):
-    """
-    Sucht die neueste Excel-Datei im angegebenen Verzeichnis.
-
-    Args:
-        directory (str): Pfad zum Ordner, der durchsucht werden soll.
-
-    Returns:
-        str: Vollständiger Pfad zur neuesten Excel-Datei.
-    """
     try:
-        # Suchmuster für Excel-Dateien im Verzeichnis
-        files = glob.glob(os.path.join(directory, "*.xlsx"))
+        files = glob.glob(os.path.join(directory, '*.xls*'))
+
+        files = [f for f in files if f.lower().endswith(('.xlsx', '.xlsm' ))]
         if not files:
-            raise FileNotFoundError(f"Keine Excel-Dateien im Ordner {directory} gefunden.")
-        # Rückgabe der neuesten Datei nach Änderungsdatum
-        return max(files, key=os.path.getmtime)
+            raise FileNotFoundError(f"No Excel files found in folder: {directory}")
+        return max(files, key=os.path.getctime)
+
     except Exception as e:
-        print(f"Fehler beim Suchen der Datei: {e}")
+        print(f"Error while searching for Excel files: {e}")
         raise
 
+# Determine project root (outside Python_Project)
+def get_project_root():
+    if getattr(sys, 'frozen', False):
+        # Running as EXE
+        return Path(sys.executable).resolve().parent.parent.parent
+    else:
+        # Running from source
+        return Path(__file__).resolve().parent.parent
 
-path_KSReport = get_latest_excel_file(r"C:\Single Source of Truth - Fh Aachen\Input_Data\KS_Report")
-path_Reaktordata = r"C:\Single Source of Truth - Fh Aachen\Input_Data\Reaktor_Data"
-path_LgrBwg = r"C:\Single Source of Truth - Fh Aachen\Input_Data\Lgr_Bwg"
-jsonfile_reactor= r"C:\Single Source of Truth - Fh Aachen\Python_Project\interface3OM\JsonFile\loaded_files.json"
+# Root = "C:\Single Source of Truth - Fh Aachen"
+PROJECT_ROOT = get_project_root()
 
-# Only for testing cases
-path_variables = r"C:\Single Source of Truth - Fh Aachen\Input_Data\Variablen\Variables.xlsx"
+#BASE_DIR = PROJECT_ROOT.parent
+
+# Input_Data is outside Python_Project
+INPUT_DATA = PROJECT_ROOT / "Input_Data"
+
+# Paths
+path_KSReport = get_latest_excel_file(str(INPUT_DATA / "KS_Report"))
+path_Reaktordata = str(INPUT_DATA / "Reaktor_Data")
+path_LgrBwg = str(INPUT_DATA / "Lgr_Bwg")
+
+jsonfile_reactor = str(PROJECT_ROOT / "Python_Project" / "interface3OM" / "JsonFile" / "loaded_files.json")
+
+# For testing
+path_variables = str(INPUT_DATA / "Variable" / "Variables.xlsx")
