@@ -62,6 +62,14 @@ def clean_data(df):
     print("Sample Cleaned DataFrame Rows:\n", df.head())
     return df
 
+def read_excel_auto(file_path, sheet_name=0, header=0, dtype=str):
+    file_lower = file_path.lower()
+    if file_lower.endswith(".xls"):
+        df = pd.read_excel(file_path, engine="xlrd", sheet_name=sheet_name, header=header, dtype=dtype)
+    else:
+        df = pd.read_excel(file_path, engine="openpyxl", sheet_name=sheet_name, header=header, dtype=dtype)
+    return df
+
 
 def load_dim_lagerbewegung_incre():
     """
@@ -74,8 +82,12 @@ def load_dim_lagerbewegung_incre():
     # Define the absolute path to the folder containing the Excel files
     folder_path = path_LgrBwg
 
-    # Get all Excel files in the folder
-    excel_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith('.Xls')]
+    # Collect all Excel files
+    excel_files = [
+        os.path.join(folder_path, f)
+        for f in os.listdir(folder_path)
+        if f.lower().endswith(('.xls', '.xlsx', '.xlsm'))
+    ]
 
     # Fetch existing keys from the database
     cursor.execute("SELECT BpzIdt, BucDat FROM dim_lagerbewegung")
@@ -84,7 +96,7 @@ def load_dim_lagerbewegung_incre():
     new_rows_list = []
     for file_path in excel_files:
         print(f"Processing file: {file_path}")
-        df = pd.read_excel(file_path, sheet_name=0, header=0, dtype=str)
+        df = read_excel_auto(file_path, sheet_name=0, header=0, dtype=str)
         df = clean_data(df)
 
         df["BpzIdt"] = df["BpzIdt"].astype(str)

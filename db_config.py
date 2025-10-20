@@ -1,18 +1,15 @@
 import pyodbc
 
 def get_db_connection():
-    connection = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};'
-        #'SERVER=10.2.144.12,1433;'
-        'SERVER=STLDB02.saturnus.ads,1433;'
-        'DATABASE=master;'  # Replace with your database name
-        'UID=FHaachenP;'
-        'PWD=HEjMxRdctaAo1!!;'
-        #'Trusted_Connection=no;'  # Use Windows credentials
-     	'Trusted_Connection=yes;'
- 	    'Encrypt=yes;'
-        'TrustServerCertificate=yes;'  # Use Windows credentials
+    connection_string = (
+        r"DRIVER={ODBC Driver 17 for SQL Server};"
+        r"SERVER=MSI\SQLEXPRESS01;"
+        r"DATABASE=NyrstarDB_1;"
+        r"UID=sa;"
+        r"PWD=Beldi-2002100;"
+        r"Trusted_Connection=no;"
     )
+    connection = pyodbc.connect(connection_string)
     return connection
 
 conn = None

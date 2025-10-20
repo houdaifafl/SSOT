@@ -18,7 +18,7 @@ def main():
         # Call create_tables function
         create_tables()
 
-        #load_tables()
+        load_tables()
         #Test query to check if connection is working
         cursor = conn.cursor()
 

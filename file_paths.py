@@ -18,12 +18,9 @@ def get_latest_excel_file(directory):
 
 # Determine project root (outside Python_Project)
 def get_project_root():
-    if getattr(sys, 'frozen', False):
-        # Running as EXE
-        return Path(sys.executable).resolve().parent.parent.parent
-    else:
-        # Running from source
-        return Path(__file__).resolve().parent.parent
+    # Returns the root directory of your project (FH-Projekt_1semester)
+    return Path(__file__).resolve().parent
+
 
 # Root = "C:\Single Source of Truth - Fh Aachen"
 PROJECT_ROOT = get_project_root()
@@ -38,7 +35,7 @@ path_KSReport = get_latest_excel_file(str(INPUT_DATA / "KS_Report"))
 path_Reaktordata = str(INPUT_DATA / "Reaktor_Data")
 path_LgrBwg = str(INPUT_DATA / "Lgr_Bwg")
 
-jsonfile_reactor = str(PROJECT_ROOT / "Python_Project" / "interface3OM" / "JsonFile" / "loaded_files.json")
+jsonfile_reactor = str(PROJECT_ROOT / "interface3OM" / "JsonFile" / "loaded_files.json")
 
 # For testing
 path_variables = str(INPUT_DATA / "Variable" / "Variables.xlsx")

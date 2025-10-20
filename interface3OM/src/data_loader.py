@@ -12,16 +12,13 @@ def connect_to_database():
     """
     try:
         connection = pyodbc.connect(
-            'DRIVER={ODBC Driver 17 for SQL Server};'
-            #'SERVER=10.2.144.12,1433;'
-            'SERVER=STLDB02,1433;'
-            'DATABASE=master;'  # Replace with your database name
-            #'UID=FHaachenP;'
-            #'PWD=HEjMxRdctaAo1!!;'
-            'Trusted_Connection=yes;'  # Use Windows credentials
-            #'Encrypt=yes;'
-            #'TrustServerCertificate = yes;'  # Use Windows credentials
-        )
+        r"DRIVER={ODBC Driver 17 for SQL Server};"
+        r"SERVER=MSI\SQLEXPRESS01;"
+        r"DATABASE=NyrstarDB_1;"
+        r"UID=sa;"
+        r"PWD=Beldi-2002100;"
+        r"Trusted_Connection=no;"
+    )
         print("Database connection established.")
         return connection.cursor(), connection
     except Exception as e:

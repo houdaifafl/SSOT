@@ -13,7 +13,7 @@ def main():
         print("Connected to the database!")
 
         # Call create_tables function
-        #create_tables()
+        create_tables()
 
         load_tables()
 
