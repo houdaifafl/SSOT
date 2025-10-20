@@ -6,7 +6,7 @@ def get_db_connection():
         r"SERVER=MSI\SQLEXPRESS01;"
         r"DATABASE=NyrstarDB_1;"
         r"UID=sa;"
-        r"PWD=Beldi-2002100;"
+        r"PWD="
         r"Trusted_Connection=no;"
     )
     connection = pyodbc.connect(connection_string)
