@@ -61,7 +61,7 @@ def create_and_load():
 
         #create_material_table(cursor)
         dataframe = import_new_materialien_namen(path_materials)
-        load_tableDB(cursor, dataframe)
+        #load_tableDB(cursor, dataframe)
         #print(dataframe)
 
         #commit transaction
