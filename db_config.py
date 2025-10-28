@@ -18,7 +18,6 @@ try:
     print("Connection to forecast and budget DB successful!")
 except pyodbc.OperationalError as e:
     print("Database connection failed:", e)
-    # Do database operations here
 finally:
     if conn:
         conn.close()

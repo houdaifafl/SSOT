@@ -134,14 +134,14 @@ def grouped_summary(conn, date):
                 mat_id, kezi_bez, mngd = row
 
                 # Correct the material ID (remove 3rd and 5th "0" only if it starts with "1")
-                if str(mat_id).startswith("1"):
+                """if str(mat_id).startswith("1"):
                     mat_id_str = str(mat_id)
                     mat_id_corrected = mat_id_str[:2] + mat_id_str[3:4] + mat_id_str[5:]  # Remove 3rd and 5th positions
                 else:
-                    mat_id_corrected = mat_id
+                    mat_id_corrected = mat_id"""
 
                 mngd_in_tons = round((mngd / 1000), 1)  # Convert to tons and round
-                valid_rows.append((mat_id_corrected, kezi_bez, mngd_in_tons))
+                valid_rows.append((mat_id, kezi_bez, mngd_in_tons))
             except Exception as e:
                 # Handle any errors for individual rows and continue
                 print(f"Error processing row {row}: {e}")
@@ -236,20 +236,20 @@ def grouped_summary_for_interval(conn, start_date, end_date):
                     print(f"Raw Material ID: {raw_mat_id}")
 
                     # Correct the material ID (remove 3rd and 5th "0" if it starts with "1")
-                    if str(raw_mat_id).startswith("1"):
+                    """if str(raw_mat_id).startswith("1"):
                         mat_id_str = str(raw_mat_id)
                         mat_id_corrected = mat_id_str[:2] + mat_id_str[3:4] + mat_id_str[5:]
                     else:
-                        mat_id_corrected = str(raw_mat_id)
+                        mat_id_corrected = str(raw_mat_id)"""
 
                     # Debug: Print corrected material ID
-                    print(f"Corrected Material ID: {mat_id_corrected}")
+                    print(f"Corrected Material ID: {raw_mat_id}")
 
                     # Map the corrected ID to dim_material IDs
-                    if mat_id_corrected in material_map:
-                        daily_values[mat_id_corrected]["value"] = round((value_in_kg / 1000), 1)  # Convert kg to tons and round
+                    if raw_mat_id in material_map:
+                        daily_values[raw_mat_id]["value"] = round((value_in_kg / 1000), 1)  # Convert kg to tons and round
                     else:
-                        print(f"Material ID {mat_id_corrected} not found in 'dim_material'.")
+                        print(f"Material ID {raw_mat_id} not found in 'dim_material'.")
                 except Exception as row_error:
                     print(f"Error processing row {row}: {row_error}")
                     continue
@@ -381,14 +381,15 @@ def _calculate_concentrates(conn, start_date, end_date, category=None):
 
         for row in rows:
             raw_mat_id, value_in_kg = row
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
-            if mat_id_corrected in material_map:
+            if raw_mat_id in material_map:
                 value_in_tons = abs(round((value_in_kg / 1000), 1))  # Convert kg to tons
-                daily_values[mat_id_corrected]["value"] = value_in_tons
+                daily_values[raw_mat_id]["value"] = value_in_tons
                 daily_total += value_in_tons
 
                 # Calculate the percentage if the ist_total is available
@@ -513,14 +514,15 @@ def _calculate_al_materials_and_name(conn, start_date, end_date, material_name=N
 
         for row in rows:
             raw_mat_id, value_in_kg = row
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
-            if mat_id_corrected in material_map:
+            if raw_mat_id in material_map:
                 value_in_tons = abs(round((value_in_kg / 1000), 1))  # Convert kg to tons
-                daily_values[mat_id_corrected]["value"] = value_in_tons
+                daily_values[raw_mat_id]["value"] = value_in_tons
                 daily_total += value_in_tons
 
         # Calculate the percentage if the ist_total is available
@@ -655,14 +657,15 @@ def _calculate_pastes(conn, start_date, end_date, category=None):
 
         for row in rows:
             raw_mat_id, value_in_kg = row
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
-            if mat_id_corrected in material_map:
+            if raw_mat_id in material_map:
                 value_in_tons = abs(round((value_in_kg / 1000), 1))  # Convert kg to tons
-                daily_values[mat_id_corrected]["value"] = value_in_tons
+                daily_values[raw_mat_id]["value"] = value_in_tons
                 daily_total += value_in_tons
 
                 # Calculate the percentage if the ist_total is available
@@ -791,14 +794,15 @@ def _calculate_all_materials(conn, start_date, end_date, category=None):
 
         for row in rows:
             raw_mat_id, value_in_kg = row
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
-            if mat_id_corrected in material_map:
+            if raw_mat_id in material_map:
                 value_in_tons = abs(round((value_in_kg / 1000), 1))  # Convert kg to tons
-                daily_values[mat_id_corrected]["value"] = value_in_tons
+                daily_values[raw_mat_id]["value"] = value_in_tons
                 daily_total += value_in_tons
 
                 # Calculate the percentage if the ist_total is available
@@ -888,14 +892,15 @@ def _calculate_recirculate_concentrates(conn, start_date, end_date):
             raw_mat_id, value_in_kg = row
 
             # Directly transform material ID (if needed)
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
             # Convert kg to tons and update totals
             value_in_tons = abs(round(value_in_kg / 1000))
-            daily_values[mat_id_corrected] = value_in_tons
+            daily_values[raw_mat_id] = value_in_tons
             daily_total += value_in_tons
 
         # Store daily totals and results
@@ -972,14 +977,14 @@ def _calculate_fluxes_concentrates(conn, start_date, end_date):
             raw_mat_id, value_in_kg = row
 
             # Directly transform material ID (if needed)
-            if str(raw_mat_id).startswith("1"):
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
             # Convert kg to tons and update totals
             value_in_tons = abs(round(value_in_kg / 1000))
-            daily_values[mat_id_corrected] = value_in_tons
+            daily_values[raw_mat_id] = value_in_tons
             daily_total += value_in_tons
 
         # Store daily totals and results
@@ -1122,14 +1127,15 @@ def calculate_category_OX_others(conn, start_date, end_date):
 
         for row in rows:
             raw_mat_id, value_in_kg = row
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
-            if mat_id_corrected in material_map:
+            if raw_mat_id in material_map:
                 value_in_tons = abs(round((value_in_kg / 1000), 1))  # Convert kg to tons
-                daily_values[mat_id_corrected]["value"] = value_in_tons
+                daily_values[raw_mat_id]["value"] = value_in_tons
                 daily_total += value_in_tons
 
         if ist_total > 0:
@@ -1278,14 +1284,15 @@ def _calculate_others(conn, start_date, end_date, categories=None):
 
         for row in rows:
             raw_mat_id, value_in_kg = row
-            if str(raw_mat_id).startswith("1"):
+
+            """if str(raw_mat_id).startswith("1"):
                 mat_id_corrected = str(raw_mat_id)[:2] + str(raw_mat_id)[3:4] + str(raw_mat_id)[5:]
             else:
-                mat_id_corrected = str(raw_mat_id)
+                mat_id_corrected = str(raw_mat_id)"""
 
-            if mat_id_corrected in material_map:
+            if raw_mat_id in material_map:
                 value_in_tons = abs(round((value_in_kg / 1000), 1))  # Convert kg to tons
-                daily_values[mat_id_corrected]["value"] = value_in_tons
+                daily_values[raw_mat_id]["value"] = value_in_tons
                 daily_total += value_in_tons
 
         if ist_total > 0:

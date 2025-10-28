@@ -37,5 +37,7 @@ path_LgrBwg = str(INPUT_DATA / "Lgr_Bwg")
 
 jsonfile_reactor = str(PROJECT_ROOT / "interface3OM" / "JsonFile" / "loaded_files.json")
 
+#path of the excel-sheet for all materials names
+path_materials = str(INPUT_DATA / "Projekt2" / "Nyrstar_Projekt.xlsx" )
 # For testing
 path_variables = str(INPUT_DATA / "Variable" / "Variables.xlsx")

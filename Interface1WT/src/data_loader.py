@@ -13,7 +13,6 @@ import db_config
 def extract_material_df(file_path):
     """
     Extract and classify material data from an Excel file based on Rohstoffnummer validation and classification.
-
     Args:
         file_path (str): Path to the Excel file.
 
@@ -32,8 +31,10 @@ def extract_material_df(file_path):
         if pd.isna(value):
             return False
         value = str(value)
-        return (value.isdigit() and len(value) == 5 and value.startswith("1")) or \
-               ("-b" in value and len(value.split('-')[0]) == 5)
+        return (value.isdigit() and len(value) == 7 and value.startswith("1")) or \
+               ("-b" in value and len(value.split('-')[0]) == 7) or \
+               ("-H1" in value and len(value.split('-')[0]) == 7) or \
+               ("-H2" in value and len(value.split('-')[0]) == 7)
 
     # Filter valid rows
     valid_rows = df[df['dim_material_id'].apply(is_valid_rohstoffnummer)].copy()
@@ -212,8 +213,10 @@ def extract_bdgt_fcst_df(file_path, years_to_load, is_budget):
         if pd.isna(value):
             return False
         value = str(value)
-        return (value.isdigit() and len(value) == 5 and value.startswith("1")) or (
-                "-b" in value and len(value.split('-')[0]) == 5)
+        return (value.isdigit() and len(value) == 7 and value.startswith("1")) or \
+            ("-b" in value and len(value.split('-')[0]) == 7) or \
+            ("-H1" in value and len(value.split('-')[0]) == 7) or \
+            ("-H2" in value and len(value.split('-')[0]) == 7)
 
     valid_rows = df[df['Rohstoffnummer'].apply(is_valid_rohstoffnummer)].copy()
 

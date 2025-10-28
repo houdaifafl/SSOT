@@ -43,6 +43,19 @@ def get_year_month_columns(file_path, sheet_name, years_to_load):
     print(f"Detected month columns for the pre-defined years:", month_columns)  # Debug print to check extracted month columns
     return month_columns
 
+def create_material_table(cursor):
+    query = """IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'dim_material_2')
+            BEGIN 
+                CREATE TABLE dbo.dim_material_2 (
+                    dim_material_id VARCHAR(20) PRIMARY KEY,
+                    material_name VARCHAR(100),
+                    material_type VARCHAR(50),
+                    category VARCHAR(10)
+                );
+            END;
+            """
+    cursor.execute(query)
+    print("dim_material number 2 table created.")
 
 # dimensional table creators:
 def create_dim_material_table(cursor):
@@ -144,6 +157,8 @@ def create_tables():
 
         # Define the years to load
         years_to_load = [2023, 2024, 2025, 2026, 2027, 2028]
+
+        #create_material_table(cursor)
 
         # Create the dimension tables
         create_dim_material_table(cursor)
