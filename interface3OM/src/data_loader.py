@@ -16,7 +16,7 @@ def connect_to_database():
         r"SERVER=MSI\SQLEXPRESS01;"
         r"DATABASE=NyrstarDB_1;"
         r"UID=sa;"
-        r"PWD=Beldi-2002100;"
+        r"PWD=;"
         r"Trusted_Connection=no;"
     )
         print("Database connection established.")
